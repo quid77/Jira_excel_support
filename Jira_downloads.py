@@ -1,3 +1,5 @@
+import collections
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.keys import Keys
@@ -12,6 +14,7 @@ import shutil
 from docx.shared import Inches, Pt
 import glob
 import re
+import pandas
 import win32com.client as win32
 from win32com.client import constants
 import docx, docxpy
@@ -103,6 +106,29 @@ class JiraTestsDownload(unittest.TestCase):
         for file in files:
             if file[:-4].endswith(")"):
                 shutil.move(file, file[:-8] + ".doc")
+
+
+def get_excel_links():
+    titles_and_tasks = collections.defaultdict(list)
+    file_handler = pandas.read_excel(str(script_path) + "\\Book.xlsx")
+
+    all_labels = [label for label in file_handler.columns]
+    for label in all_labels:
+        data = pandas.DataFrame(file_handler, columns=[label])
+        column = data.to_string(index=False).split('\n')
+        stripped_list = [elem.strip().split('\\n') for elem in column]
+
+        for cell in stripped_list:
+            issue_link = [link for link in cell if "https" in link]
+            if issue_link:
+                titles_and_tasks[label].append(issue_link)
+
+    # stripped_list2 = [elem.split]
+
+
+
+    # rows = file_handler.values
+    # print(file_handler)
 
 
 def create_dir_hierarchy():
@@ -318,10 +344,11 @@ def merge_files_in_epics():
 
 if __name__ == "__main__":
 
-    create_dir_hierarchy()
-    unittest.main(exit=False)  # Dont stop the program after test execution (it would skip below functions)
-    move_doc_files()
-    save_to_docx()
-    read_docx_files()
-    move_files_to_epics()
-    merge_files_in_epics()
+    get_excel_links()
+    # create_dir_hierarchy()
+    # unittest.main(exit=False)  # Dont stop the program after test execution (it would skip below functions)
+    # move_doc_files()
+    # save_to_docx()
+    # read_docx_files()
+    # move_files_to_epics()
+    # merge_files_in_epics()
