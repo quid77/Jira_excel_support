@@ -7,7 +7,7 @@ docxpy==0.8.5
 extras==1.0.0
 fixtures==3.0.0
 linecache2==1.0.0
-lxml==4.5.0
+lxml==4.6.2
 more-itertools==7.2.0
 numpy==1.18.3
 packaging==19.2
